@@ -1,5 +1,5 @@
-import omg.palette
-import omg.lump
+import omgifol.palette
+import omgifol.lump
 
 class Colormap:
     """An editor for Doom's COLORMAP lump. The colormap holds 34 tables
@@ -47,17 +47,17 @@ class Colormap:
 
     def to_lump(self):
         """Pack to a COLORMAP lump."""
-        
+
         output = ""
         for t in self.tables:
             for c in t:
                 output += chr(c)
-                
+
         return omg.lump.Lump(output)
-        
+
         # packed = [''.join([chr(c) for c in t]) for t in self.tables]
         # return omg.lump.Lump(''.join(packed))
-        
+
     def set_position(self,table,index,pal_index):
         """Sets a specified position in the colormap to the specified
         index in the playpal"""

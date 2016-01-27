@@ -1,4 +1,4 @@
-import omg, sys
+import omgifol as omg, sys
 
 if (len(sys.argv) < 3):
     print "\n    Omgifol script: merge WADs\n"

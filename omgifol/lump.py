@@ -9,8 +9,8 @@ except:
     pass
 
 import os
-import omg.palette
-from omg.util import *
+import omgifol.palette
+from omgifol.util import *
 
 
 class Lump(object):

@@ -1,9 +1,9 @@
-from omg.util import *
-from omg.lump import *
-from omg.wad import NameGroup
+from omgifol.util import *
+from omgifol.lump import *
+from omgifol.wad import NameGroup
 
-import omg.lineinfo as lineinfo
-import omg.thinginfo as thinginfo
+import omgifol.lineinfo as lineinfo
+import omgifol.thinginfo as thinginfo
 
 Vertex = make_struct(
   "Vertex", """Represents a map vertex""",
@@ -182,11 +182,11 @@ class MapEditor:
             self.vertexes = self._unpack_lump(Vertex,    m["VERTEXES"].data)
             self.sidedefs = self._unpack_lump(Sidedef,   m["SIDEDEFS"].data)
             self.sectors  = self._unpack_lump(Sector,    m["SECTORS"].data)
-            
+
             if "BEHAVIOR" in m: # Hexen / ZDoom map
                 self.things   = self._unpack_lump(ZThing,    m["THINGS"].data)
                 self.linedefs = self._unpack_lump(ZLinedef,  m["LINEDEFS"].data)
-                
+
                 self.behavior = m["BEHAVIOR"].data
                 if "SCRIPTS" in m:
                     self.scripts = m["SCRIPTS"].data
@@ -197,12 +197,12 @@ class MapEditor:
                 self.linedefs = self._unpack_lump(Linedef,   m["LINEDEFS"].data)
         except KeyError as e:
             raise ValueError("map is missing %s lump" % e)
-        
+
         # use -1 for unused sidedefs instead of 0xFFFF
         for line in self.linedefs:
             if line.front == 0xFFFF: line.front = -1
             if line.back  == 0xFFFF: line.back  = -1
-        
+
         from struct import error as StructError
         try:
             self.ssectors = self._unpack_lump(SubSector, m["SSECTORS"].data)
@@ -228,13 +228,13 @@ class MapEditor:
 
     def to_lumps(self):
         m = NameGroup()
-        
+
         # change -1 to 0xFFFF so linedefs pack correctly
         linedefs = self.linedefs[:]
         for line in linedefs:
             if line.front == -1: line.front = 0xFFFF
             if line.back  == -1: line.back  = 0xFFFF
-        
+
         m["_HEADER_"] = Lump("")
         m["VERTEXES"] = Lump(join([x.pack() for x in self.vertexes]))
         m["THINGS"  ] = Lump(join([x.pack() for x in self.things  ]))
@@ -246,16 +246,16 @@ class MapEditor:
         m["SSECTORS"] = Lump(join([x.pack() for x in self.ssectors]))
         m["BLOCKMAP"] = self.blockmap
         m["REJECT"]   = self.reject
-        
+
         # hexen / zdoom script lumps
         try:
             m["BEHAVIOR"] = self.behavior
             m["SCRIPTS"]  = self.scripts
         except AttributeError:
             pass
-        
+
         return m
-    
+
     def draw_sector(self, vertexes, sector=None, sidedef=None):
         """Draw a polygon from a list of vertexes. The vertexes may be
         either Vertex objects or simple (x, y) tuples. A sector object
@@ -276,7 +276,7 @@ class MapEditor:
             side = copy(sidedef)
             side.sector = len(self.sectors)-1
             self.sidedefs.append(side)
-            
+
             #check if the new line is being written over an existing
             #and merge them if so.
             new_linedef = Linedef(vx_a=firstv+((i+1)%len(vertexes)),
@@ -298,14 +298,14 @@ class MapEditor:
                     break
             if (match_existing == False):
                 self.linedefs.append(new_linedef)
-    
+
     def compare_vertex_positions(self,vertex1,vertex2):
         """Compares the positions of two vertices."""
         if (vertex1.x == vertex2.x):
             if (vertex1.y == vertex2.y):
                 return True
         return False
-    
+
     def compare_linedefs(self,linedef1,linedef2):
         """Compare the vertex positions of two linedefs.
         Returns 0 for mismatch.
@@ -313,29 +313,29 @@ class MapEditor:
         Returns 2 when the vertex positions are in the same order.
         Returns 3 when the linedefs use the same vertices, but flipped.
         Returns 4 when the linedefs use the exact same vertices."""
-        
+
         if (linedef1.vx_a == linedef2.vx_a):
             if (linedef1.vx_b == linedef2.vx_b):
                 return 4
-            
+
         if (linedef1.vx_a == linedef2.vx_b):
             if (linedef1.vx_b == linedef2.vx_a):
                 return 3
-        
+
         if (self.compare_vertex_positions(self.vertexes[linedef1.vx_a],
             self.vertexes[linedef2.vx_a])):
             if (self.compare_vertex_positions(self.vertexes[linedef1.vx_b],
                 self.vertexes[linedef2.vx_b])):
                 return 2
-        
+
         if (self.compare_vertex_positions(self.vertexes[linedef1.vx_a],
             self.vertexes[linedef2.vx_b])):
             if (self.compare_vertex_positions(self.vertexes[linedef1.vx_b],
                 self.vertexes[linedef2.vx_a])):
                 return 1
-        
+
         return 0
-        
+
     def compare_sectors(self,sect1,sect2):
         """Compare two sectors' data and returns True when they match.
         """
@@ -348,26 +348,26 @@ class MapEditor:
             sect1.tag == sect2.tag):
             return True
         return False
-    
+
     def combine_sectors(self,sector1,sector2,remove_linedefs=True):
         """Combines two sectors together, replacing all references to
-        the second with the first. If remove_linedefs is true, any 
+        the second with the first. If remove_linedefs is true, any
         linedefs that connect the two sectors will be removed."""
         for sd in self.sidedefs:
             if (self.sectors[sd.sector] == sector2):
                 sd.sector = self.sectors.index(sector1)
-                
+
                 if (remove_linedefs):
                     for lc in self.linedefs:
                         if (lc.back != -1):
-                            if (self.sectors[self.sidedefs[lc.front].sector] == sector1 and 
+                            if (self.sectors[self.sidedefs[lc.front].sector] == sector1 and
                                 self.sectors[self.sidedefs[lc.back].sector] == sector1):
                                 self.linedefs.remove(lc)
         # we can rely on a nodebuilder to remove unused sectors
         # self.sectors[self.sectors.index(sector2)].tx_floor = "_REMOVED"
-        
-        
-        
+
+
+
     def paste(self, other, offset=(0,0)):
         """Insert content of another map."""
         vlen = len(self.vertexes)
@@ -395,4 +395,3 @@ class MapEditor:
             z.x += offset[0]
             z.y += offset[1]
             self.things.append(z)
-

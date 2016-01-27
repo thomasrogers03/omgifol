@@ -1,5 +1,5 @@
 import os, md5, time
-from omg.util import *
+from omgifol.util import *
 
 Header = make_struct(
   "Header",

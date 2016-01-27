@@ -1,6 +1,6 @@
 from sys import argv
-from omg import *
-from omg.mapedit import *
+from omgifol import *
+from omgifol.mapedit import *
 
 def mirror(map):
     ed = MapEditor(map)

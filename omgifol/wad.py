@@ -1,8 +1,8 @@
 import os, glob
-import omg.palette
-from omg.lump  import *
-from omg.util import *
-from omg.wadio import WadIO
+import omgifol.palette
+from omgifol.lump  import *
+from omgifol.util import *
+from omgifol.wadio import WadIO
 
 class LumpGroup(OrderedDict):
     """A dict-like object for holding a group of lumps"""

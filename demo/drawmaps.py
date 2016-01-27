@@ -1,4 +1,4 @@
-from omg import *
+from omgifol import *
 import sys
 import Image, ImageDraw
 

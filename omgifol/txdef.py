@@ -1,6 +1,6 @@
-from omg.lump import Lump
-from omg.util import *
-from omg.wad import TxdefGroup
+from omgifol.lump import Lump
+from omgifol.util import *
+from omgifol.wad import TxdefGroup
 
 TextureDef = make_struct(
   "TextureDef",
@@ -117,4 +117,3 @@ class Textures(OrderedDict):
         self[name].patches.append(PatchDef())
         self[name].patches[0].name = name
         self[name].width, self[name].height = plump.dimensions
-

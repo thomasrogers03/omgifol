@@ -1,5 +1,5 @@
-from omg.lump import Lump
-import omg.palette
+from omgifol.lump import Lump
+import omgifol.palette
 
 class Playpal:
     """An editor for Doom's PLAYPAL lump. The PLAYPAL lump contains 14
