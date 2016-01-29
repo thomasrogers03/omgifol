@@ -145,35 +145,35 @@ class Lexer:
             return False
 
     def ukeyword(self):
-        match = self.re_keyword.match(self.textmap[self.textpos:])
+        match = self.re_keyword.match(self.textmap, self.textpos)
         if match:
             return match.group(0)
         else:
             return False
 
     def identifier(self):
-        match = self.re_identifier.match(self.textmap[self.textpos:])
+        match = self.re_identifier.match(self.textmap, self.textpos)
         if match:
             return match.group(0)
         else:
             return False
 
     def integer(self):
-        match = self.re_integer.match(self.textmap[self.textpos:])
+        match = self.re_integer.match(self.textmap, self.textpos)
         if match:
             return (match.group(0), int(match.group(0)))
         else:
             return (False, False)
 
     def float(self):
-        match = self.re_float.match(self.textmap[self.textpos:])
+        match = self.re_float.match(self.textmap, self.textpos)
         if match:
             return (match.group(0), float(match.group(0)))
         else:
             return (False, False)
 
     def string(self):
-        match = self.re_string.match(self.textmap[self.textpos:])
+        match = self.re_string.match(self.textmap, self.textpos)
         if match:
             return (match.group(0), match.group(1).replace('\\"', '"'))
         else:
