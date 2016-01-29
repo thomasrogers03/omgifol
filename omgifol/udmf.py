@@ -14,7 +14,7 @@ class Symbol:
     scolon = 'SCOLON'
 
 class Lexer:
-    textmap = open("textmap.lmp").read()
+    textmap = ''
     textpos = 0
 
     re_identifier = re.compile(r'[A-Za-z_]+[A-Za-z0-9_]*')
@@ -22,6 +22,9 @@ class Lexer:
     re_float = re.compile(r'[+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?')
     re_string = re.compile(r'"((?:[^"\\]|\\.)*)"')
     re_keyword = re.compile('[^{}();"\'\n\t ]+')
+
+    def __init__(self, data):
+        self.textmap = data
 
     def scan(self):
         token = ''
@@ -278,7 +281,3 @@ class Parser:
             return
 
         raise Exception("expected value")
-
-lex = Lexer()
-parser = Parser()
-parser.parse(lex.scan())

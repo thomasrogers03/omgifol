@@ -2,6 +2,7 @@ from omgifol.util import *
 from omgifol.lump import *
 from omgifol.wad import NameGroup
 
+import omgifol.udmf as udmf
 import omgifol.lineinfo as lineinfo
 import omgifol.thinginfo as thinginfo
 
@@ -175,9 +176,18 @@ class MapEditor:
         s = class_._fmtsize
         return [class_(bytes=data[i:i+s]) for i in xrange(0,len(data),s)]
 
-    def from_lumps(self, lumpgroup):
-        """Load entries from a lump group."""
+    def _from_udmf_lumps(self, lumpgroup):
+        """Load entries from UDMF lump group."""
+
+        # Parse the text
+        lex = udmf.Lexer(lumpgroup["TEXTMAP"].data)
+        parser = udmf.Parser()
+        parser.parse(lex.scan())
+
+    def _from_standard_lumps(self, lumpgroup):
+        """Load entries from standard format lump group."""
         m = lumpgroup
+
         try:
             self.vertexes = self._unpack_lump(Vertex,    m["VERTEXES"].data)
             self.sidedefs = self._unpack_lump(Sidedef,   m["SIDEDEFS"].data)
@@ -218,6 +228,13 @@ class MapEditor:
             self.blockmap = []
             self.reject   = []
             self.nodes    = []
+
+    def from_lumps(self, lumpgroup):
+        """Load entries from a lump group."""
+        if "TEXTMAP" in lumpgroup:
+            self._from_udmf_lumps(lumpgroup)
+        else:
+            self._from_standard_lumps(lumpgroup)
 
     def load_gl(self, mapobj):
         """Load GL nodes entries from a map"""

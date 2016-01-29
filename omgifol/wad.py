@@ -161,8 +161,8 @@ class TxdefGroup(NameGroup):
     def __init2__(self):
         self.names = ['TEXTURE?', 'PNAMES']
     def __add__(self, other):
-        import omg.txdef
-        a = omg.txdef.Textures()
+        import omgifol.txdef
+        a = omgifol.txdef.Textures()
         a.from_lumps(self)
         a.from_lumps(other)
         return a.to_lumps()
@@ -181,6 +181,7 @@ _maptail    = ['THINGS',   'LINEDEFS', 'SIDEDEFS', # Must be in order
                'NODES',    'SECTORS',  'REJECT',
                'BLOCKMAP', 'BEHAVIOR', 'SCRIPT*']
 _glmaptail    = ['GL_VERT', 'GL_SEGS', 'GL_SSECT', 'GL_NODES']
+_udmfmaptail  = ['TEXTMAP', 'ZNODES', 'ENDMAP']
 _graphics     = ['TITLEPIC', 'CWILV*', 'WI*', 'M_*',
                  'INTERPIC', 'BRDR*',  'PFUB?', 'ST*',
                  'VICTORY2', 'CREDIT', 'END?',  'WI*',
@@ -197,6 +198,7 @@ defstruct = [
     [MarkerGroup, 'ztextures', Graphic, 'TX'],
     [HeaderGroup, 'maps',   Lump, _maptail],
     [HeaderGroup, 'glmaps', Lump, _glmaptail],
+    [HeaderGroup, 'udmfmaps', Lump, _udmfmaptail],
     [NameGroup,   'music',    Music, ['D_*']],
     [NameGroup,   'sounds',   Sound, ['DS*', 'DP*']],
     [TxdefGroup,  'txdefs',   Lump,  ['TEXTURE?', 'PNAMES']],
@@ -236,7 +238,7 @@ class WAD:
         section structure. By default, the structure specified in the
         defdata module is used."""
         self.__category = 'root'
-        self.palette = omg.palette.default
+        self.palette = omgifol.palette.default
         self.structure = structure
         self.groups = []
         for group_def in self.structure:
