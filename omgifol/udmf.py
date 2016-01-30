@@ -39,23 +39,18 @@ class Lexer:
                 break # Done
 
             # Check for literals
-            token = self.literal('{')
-            if token != False:
+
+            token = self.textmap[self.textpos:self.textpos + 1]
+            if token == '{':
                 yield (Symbol.oparen,)
                 continue
-
-            token = self.literal('}')
-            if token != False:
+            elif token == '}':
                 yield (Symbol.cparen,)
                 continue
-
-            token = self.literal('=')
-            if token != False:
+            elif token == '=':
                 yield (Symbol.equal,)
                 continue
-
-            token = self.literal(';')
-            if token != False:
+            elif token == ';':
                 yield (Symbol.scolon,)
                 continue
 
@@ -131,12 +126,6 @@ class Lexer:
             break
 
     ## Terminal Symbols ##
-
-    def literal(self, char):
-        if self.textmap[self.textpos:self.textpos + 1] == char:
-            return char
-        else:
-            return False
 
     def keyword(self, string):
         if self.textmap[self.textpos:self.textpos + len(string)] == string:
