@@ -45,7 +45,7 @@ class Textures(OrderedDict):
     def from_lumps(self, *args):
         """Load texture definitions from a TEXTURE1/2 lump and its
         associated PNAMES lump, or a lump group containing the lumps."""
-        from .wad import LumpGroup
+        from wad import LumpGroup
         if len(args) == 1:
             g = args[0]
             assert isinstance(g, LumpGroup)
@@ -58,7 +58,7 @@ class Textures(OrderedDict):
         # Unpack PNAMES
         numdefs = unpack16(pnames.data[0:2])
         pnames = [zstrip(pnames.data[ptr:ptr+8]) \
-            for ptr in range(4, 8*numdefs+4, 8)]
+            for ptr in xrange(4, 8*numdefs+4, 8)]
 
         # Unpack TEXTURE1
         data = texture1.data
@@ -73,7 +73,7 @@ class Textures(OrderedDict):
 
     def to_lumps(self):
         """Returns two lumps TEXTURE1, PNAMES"""
-        textures = list(self.items())
+        textures = self.items()
         textures.sort()
 
         pnames = []
@@ -84,7 +84,7 @@ class Textures(OrderedDict):
                 if p.name not in used_pnames:
                     used_pnames[p.name] = len(used_pnames)
                 p.id = used_pnames[p.name]
-        pnmap = sorted([(i, name) for (name, i) in used_pnames.items()])
+        pnmap = sorted([(i, name) for (name, i) in used_pnames.iteritems()])
         pnames = pack32(len(pnmap)) + \
             ''.join(zpad(safe_name(name)) for i, name in pnmap)
 

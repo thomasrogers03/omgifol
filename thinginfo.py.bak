@@ -9,7 +9,7 @@ class ThingCategory:
     def __init__(self, table):
         global all_desc2num
         global all_num2desc
-        rev = dict([(b, a) for a, b in list(table.items())])
+        rev = dict([(b, a) for a, b in table.items()])
         all_desc2num.update(table)
         all_num2desc.update(rev)
         self.table = dict([(x, None) for x in table])
