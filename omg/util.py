@@ -40,7 +40,7 @@ class OrderedDict:
 
     def __iter__(self):
         """Iterate over keys"""
-        return iter(self.keys())
+        return iter(list(self.keys()))
 
     def __add__(self, other):
         """Adds two dicts, copying items shallowly"""
@@ -60,19 +60,19 @@ class OrderedDict:
 
     def items(self):
         """Returns a list of (key, value) tuples for all items."""
-        data = [(v[0], k, v[1]) for (k, v) in self._items.items()]
+        data = [(v[0], k, v[1]) for (k, v) in list(self._items.items())]
         data.sort()
         return [(d[1], d[2]) for d in data]
 
     def keys(self):
         """Returns a list of all keys."""
-        data = [(v[0], k, v[1]) for (k, v) in self._items.items()]
+        data = [(v[0], k, v[1]) for (k, v) in list(self._items.items())]
         data.sort()
         return [d[1] for d in data]
 
     def values(self):
         """Returns a list of all values."""
-        data = [(v[0], k, v[1]) for (k, v) in self._items.items()]
+        data = [(v[0], k, v[1]) for (k, v) in list(self._items.items())]
         data.sort()
         return [d[2] for d in data]
 
@@ -83,15 +83,15 @@ class OrderedDict:
     def find(self, pattern):
         """Find all items that match the given pattern (supporting
         wildcards). Returns a list of keys."""
-        return [k for k in self.keys() if wccmp(k, pattern)]
+        return [k for k in list(self.keys()) if wccmp(k, pattern)]
 
     def rename(self, old, new):
         """Rename an entry"""
-        print old, new
-        print old in self
-        print "K", self.keys()
+        print(old, new)
+        print(old in self)
+        print("K", list(self.keys()))
         self[new] = self[old]
-        print self[new]
+        print(self[new])
         del self[old]
 
     def __copy__(self):
@@ -179,7 +179,7 @@ def fixname(chars):
 def fixpadname(chars):
     """Same as fixname, but returns a string of exactly 8 bytes length,
     using zero (0x00) bytes for padding."""
-    print "DEPRECATED!"
+    print("DEPRECATED!")
     return zpad(fixname(chars))
 
 def fix_saving_name(name):
@@ -329,5 +329,6 @@ def _structdef(name, doc, fields, flags=None, init_exec=""):
 
 def make_struct(*args, **kwargs):
     """Create a Struct class according to the given format"""
-    exec _structdef(*args, **kwargs)
-    return Struct
+    struct_definition_locals = {}
+    exec(_structdef(*args, **kwargs), globals(), struct_definition_locals)
+    return struct_definition_locals["Struct"]
